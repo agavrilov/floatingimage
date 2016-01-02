@@ -1,6 +1,7 @@
 package dk.nindroid.rss.renderers;
 
 import android.graphics.Bitmap;
+import android.opengl.GLUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -75,12 +76,37 @@ public class GLHelper {
     }
 
     public static int createTexture(GL10 gl) {
+        int[] textures = new int[1];
+        gl.glGenTextures(1, textures, 0);
+        int textureID = textures[0];
+        return textureID;
     }
 
-    public static void setTexture(GL10 gl, Bitmap mBmp, int mTextureID) {
+    public static void setTexture(GL10 gl, Bitmap bmp, int textureID) {
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureID);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+                GL10.GL_NEAREST);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+                GL10.GL_TEXTURE_MAG_FILTER,
+                GL10.GL_LINEAR);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                GL10.GL_CLAMP_TO_EDGE);
+
+        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+                GL10.GL_BLEND);
+
+        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
     }
 
-    public static void draw(GL10 gl, int mTextureID, IntBuffer mVertexBuffer, FloatBuffer mTexBuffer, ByteBuffer mIndexBuffer) {
-
+    public static void draw(GL10 gl, int textureID, IntBuffer vertexBuffer, FloatBuffer texBuffer, ByteBuffer indexBuffer) {
+        gl.glActiveTexture(GL10.GL_TEXTURE0);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureID);
+        gl.glVertexPointer(3, GL10.GL_FIXED, 0, vertexBuffer);
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texBuffer);
+        gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, 4, GL10.GL_UNSIGNED_BYTE, indexBuffer);
     }
 }
