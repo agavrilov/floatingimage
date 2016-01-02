@@ -153,7 +153,7 @@ public class ShowStreams extends Activity implements MainActivity {
 		ClickHandler.init();
 		setContentView(R.layout.main); 
 		mGLSurfaceView = new GLSurfaceView(this);
-		//mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
+		mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		//mGLSurfaceView.getHolder().setFormat(PixelFormat.RGB_888);
 		mGLSurfaceView.setRenderer(renderer);
 		
